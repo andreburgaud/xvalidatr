@@ -4,7 +4,7 @@ XML Schema Validator for Windows. `XvalidatR uses external schemas (XSD files).
 
 ## Installation
 
-1. Download the zip file from the releases tab
+1. Download the zip file from the releases tab (https://github.com/andreburgaud/xvalidatr/files/786713/XvalidatR_1.0.0.zip)
 2. Extract `xvalidatr.exe` and `xvalidatr.exe.config` from the zip file
 3. Copy those two files in a directory included in your `PATH`
 
