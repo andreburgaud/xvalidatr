@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- $Id: books_error.xml 439 2008-01-26 02:08:18Z andre $ -->
+<Books xmlns="http://www.burgaud.com/XMLSchema">
+  <Book isbn="2841771210">
+    <Title>Developpement d'applications avec Objective Caml</Title>
+    <Authors>
+      <Author>Emmanuel Chailloux</Author>
+      <Author>Pascal Manoury</Author>
+      <Author>Bruno Pagano</Author>
+    </Authors>
+  </Book>
+  <!-- Intentional error in the isbn format:
+  3 digits instead of 10 (see XML Schema books.xsd) -->
+  <Book isbn="123">
+    <Title>C++ Programming Language</Title>
+    <Authors>
+      <Author>Bjarne Stroustrup</Author>
+    </Authors>
+  </Book>
+  <Book isbn="0201710897">
+    <Title>Programming Ruby</Title>
+    <Authors>
+      <Author>David Thomas</Author>
+      <Author>Andrew Hunt</Author>
+    </Authors>
+  </Book>
+</Books>

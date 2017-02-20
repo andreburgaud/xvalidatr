@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- $Id: books.xsd 439 2008-01-26 02:08:18Z andre $ -->
+<xsd:schema xmlns="http://www.burgaud.com/XMLSchema"
+            targetNamespace="http://www.burgaud.com/XMLSchema"
+            xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            elementFormDefault="qualified">
+
+  <xsd:element name="Books">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element ref="Book" maxOccurs="unbounded"/>
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:element name="Book">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element ref="Title"/>
+        <xsd:element ref="Authors"/>
+      </xsd:sequence>
+      <xsd:attribute name="isbn" use="required">
+        <xsd:simpleType>
+          <xsd:restriction base="xsd:string">
+            <xsd:pattern value="[0-9]{10}"/>
+          </xsd:restriction>
+        </xsd:simpleType>
+      </xsd:attribute>
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:element name="Authors">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element ref="Author" maxOccurs="unbounded"/>
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:element name="Title" type="xsd:string" />
+  <xsd:element name="Author" type="xsd:string" />
+
+</xsd:schema>

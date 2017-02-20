@@ -1,0 +1,410 @@
+﻿#region Using directives
+using System;
+using System.IO;
+using System.Xml;
+using System.Xml.Schema;
+using System.Xml.XPath;
+using System.Reflection;
+using System.Collections;
+#endregion
+
+namespace xvalidatr {
+    ///<summary>
+    /// Generic command line XML Schema and XML files validator.
+    ///</summary>
+    public class Validator {
+        bool _error = false;
+        bool _warning = false;
+        string _nameSpace = "";
+        string _pathSchema;
+        int _validXmlCpt = 0;
+        int _nonValidXmlCpt = 0;
+        XmlReaderSettings _settings;
+
+        ///<summary>
+        /// Unique constructor. Does not take any parameter. Displays "about" info.
+        ///</summary>
+        public Validator(string schema) {
+            _pathSchema = schema;
+            _nameSpace = getNameSpace();
+            validateSchema();
+        }
+
+        private void printColor(string text, ConsoleColor color) {
+            Console.ForegroundColor = color;
+            Console.WriteLine(text);
+            Console.ResetColor();
+        }
+
+        private void printColor(string format, Object obj, ConsoleColor color) {
+            Console.ForegroundColor = color;
+            Console.WriteLine(format, obj);
+            Console.ResetColor();
+        }
+
+        private void printError(string text) {
+            printColor(text, ConsoleColor.Red);
+        }
+
+        private void printError(string format, Object obj) {
+            printColor(format, obj, ConsoleColor.Red);
+        }
+
+        private void printWarning(string text) {
+            printColor(text, ConsoleColor.Yellow);
+        }
+
+        private void printSuccess(string text) {
+            printColor(text, ConsoleColor.Green);
+        }
+
+        private void printSuccess(string format, Object obj) {
+            printColor(format, obj, ConsoleColor.Green);
+        }
+
+        private void printBrightTitle(string text) {
+            printColor(text, ConsoleColor.Green);
+        }
+
+        private void printAction(string text) {
+            printColor(text, ConsoleColor.DarkGreen);
+        }
+
+        private void printBright(string text) {
+            printColor(text, ConsoleColor.White);
+        }
+
+        private void printBright(string format, Object obj) {
+            printColor(format, obj, ConsoleColor.White);
+        }
+
+        ///<summary>
+        /// Validates a schema.
+        ///</summary>
+        public bool validateSchema() {
+            string title = "XML Schema Validation:";
+            string schemaFile = _pathSchema;
+            printAction(title);
+            try {
+                FileInfo file = new FileInfo(_pathSchema);
+                if (!file.Exists) {
+                    printBright("{0}:", _pathSchema);
+                    printError("not found.");
+                    Environment.Exit(2);
+                }
+                else {
+                    schemaFile = file.FullName;
+                }
+            }
+            catch (System.ArgumentException) {
+                // Not very elegant. Found "Illegal characters in path", assuming wildcards.
+                string directoryName = System.IO.Path.GetDirectoryName(_pathSchema);
+                if (directoryName == null || directoryName.Length == 0) {
+                    directoryName = System.Environment.CurrentDirectory;
+                }
+                string directoryPath = System.IO.Path.GetFullPath(directoryName);
+                string wildcardPath = System.IO.Path.GetFileName(_pathSchema);
+                string[] wildcardFiles = Directory.GetFiles(directoryPath, wildcardPath);
+                if (wildcardFiles.Length == 0) {
+                    printBright("{0}:", _pathSchema);
+                    printError("not found.");
+                    Environment.Exit(2);
+                }
+                else if (wildcardFiles.Length > 1) {
+                    printBright("{0}:", _pathSchema);
+                    printError("includes more than one potential schema files. Restrict the path to only one schema file.");
+                    Environment.Exit(2);
+                }
+                else {
+                    schemaFile = wildcardFiles[0];
+                    _pathSchema = schemaFile;
+                }
+            }
+            try {
+                printBright("{0}:", schemaFile);
+                XmlSchema.Read(XmlReader.Create(_pathSchema), new ValidationEventHandler(ValidationCallback));
+                if (_error) {
+                    printError("Schema error(s).");
+                }
+                else {
+                    printSuccess("OK.");
+                }
+            }
+            catch (XmlSchemaException ex) {
+                printError(ex.Message);
+                Environment.Exit(3);
+            }
+            catch (XmlException ex) {
+                printError(ex.Message);
+                Environment.Exit(3);
+            }
+            catch (Exception ex) {
+                printError(ex.Message);
+                Environment.Exit(3);
+            }
+            return _error;
+        }
+
+        private void createXmlReaderSettings() {
+            _settings = new XmlReaderSettings();
+            try {
+                _settings.ValidationEventHandler += new ValidationEventHandler(ValidationCallback);
+                _settings.ValidationType = ValidationType.Schema;
+                _settings.ValidationFlags |= XmlSchemaValidationFlags.ReportValidationWarnings;
+                _settings.Schemas.Add(_nameSpace, _pathSchema);
+            }
+            catch (XmlSchemaException ex) {
+                printError("Schema Error: {0}", ex.Message);
+            }
+            catch (XmlException ex) {
+                printError("Schema Error: {0}", ex.Message);
+                Environment.Exit(3);
+            }
+        }
+
+        ///<summary>
+        /// Handler used during the validation (XSD and XML).
+        ///</summary>
+        private void ValidationCallback(object sender, ValidationEventArgs args) {
+            _error = true;
+            if (args.Severity == XmlSeverityType.Warning) {
+                Console.Write("WARNING: ");
+            }
+            else if (args.Severity == XmlSeverityType.Error) {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.Write("ERROR: ");
+                Console.ResetColor();
+            }
+            Console.WriteLine(args.Message); // Print the error to the screen.
+        }
+
+        ///<summary>
+        /// Extracts the namespace (targetNamespace) used in the XML schema. This
+        /// namespace will be used during the different validation process (XSD
+        /// and XML). XPath is used to extract this information.
+        ///</summary>
+        public string getNameSpace() {
+            string title = "Extracting Namespace:";
+            printAction(title);
+
+            string ns = "";
+            FileInfo file = new FileInfo(_pathSchema);
+            if (!file.Exists) {
+                printError("{0}: not found.", _pathSchema);
+                Environment.Exit(2);
+            }
+            try {
+                XPathDocument doc = new XPathDocument(file.FullName);
+                XPathNavigator nav = doc.CreateNavigator();
+                XPathNodeIterator ni = nav.Select("/*/@targetNamespace");
+                if (ni.MoveNext()) {
+                    ns = ni.Current.Value;
+                }
+            }
+            catch (XmlException ex) {
+                printError("Schema Error: {0}", ex.Message);
+                Environment.Exit(3);
+            }
+            printBright("{0}:", file.FullName);
+            if (ns.Length > 0) {
+                Console.WriteLine("uses namespace '{1}'.", file.FullName, ns);
+            }
+            else {
+                Console.WriteLine("does not use a particular namespace.", file.FullName);
+            }
+            return ns;
+        }
+
+        ///<summary>
+        /// Triggers the XML validation. Determines if the parameter is a file or
+        /// Directory.
+        ///</summary>
+        ///<param name="xml">
+        /// Path to an XML file or a directory containing XML files.
+        ///</param>
+        public void validateXmlFiles(string[] xmlFiles) {
+            string title = "XML File(s) Validation:";
+            printAction(title);
+            createXmlReaderSettings();
+            foreach (string xmlFile in xmlFiles) {
+                FileInfo fi = new FileInfo(xmlFile);
+                if (fi.Exists) { // The function parameter is a file path
+                    validateXmlFile(xmlFile);
+                }
+            }
+        }
+
+        ///<summary>Validates an XML file against a given schema.</summary>
+        ///<param name="xmlFile">Path of the XML file to validate.</param>
+        private void validateXmlFile(string xmlFile) {
+            _error = false;
+            _warning = false;
+            printBright("{0}:", xmlFile);
+            try {
+                XmlDocument doc = new XmlDocument();
+                doc.Load(XmlReader.Create(xmlFile, _settings));
+            }
+            catch (XmlException ex) {
+                _error = true;
+                printError(ex.Message);
+            }
+            catch (FileNotFoundException ex) {
+                _error = true;
+                printError(ex.Message);
+            }
+            catch (Exception ex) {
+                _error = true;
+                printError(ex.Message);
+            }
+            if (_error) {
+                _nonValidXmlCpt += 1;
+            }
+            else if (_warning) {
+                _validXmlCpt += 1;
+            }
+            else {
+                _validXmlCpt += 1;
+                printSuccess("OK.");
+            }
+        }
+
+        ///<summary>
+        /// Prints the number of files processed, the number of success and number
+        /// of failure.
+        ///</summary>
+        public int printReport() {
+            string title = "XML Validation Results:";
+            printAction(title);
+            int total = _validXmlCpt + _nonValidXmlCpt;
+            if (total == 0) {
+                printError("XML file(s) or XML directory not found.");
+            }
+            else {
+                printBright("{0} XML file(s) processed.", total);
+                if (_validXmlCpt > 0) {
+                    printSuccess("{0} valid XML file(s).", _validXmlCpt);
+                }
+                if (_nonValidXmlCpt > 0) {
+                    printError("{0} non valid XML file(s).", _nonValidXmlCpt);
+                }
+            }
+            return _nonValidXmlCpt;
+        }
+
+        ///<summary>
+        /// Helper to center text.
+        ///</summary>
+        private static String Center(string str) {
+            return str.PadLeft((Console.WindowWidth + str.Length) / 2);
+        }
+
+        private static String getAssemblyTitle(Assembly assembly) {
+            foreach (Attribute attr in assembly.GetCustomAttributes(true)) {
+                if (attr is AssemblyTitleAttribute) {
+                    return (attr as AssemblyTitleAttribute).Title;
+                }
+            }
+            return null;
+        }
+
+        ///<summary>
+        /// Display About text.
+        ///</summary>
+        private static void About() {
+            Assembly assembly = Assembly.GetExecutingAssembly();
+            AssemblyCopyrightAttribute copyright;
+            copyright = (AssemblyCopyrightAttribute)AssemblyCopyrightAttribute.GetCustomAttribute(assembly,
+                                                                                                  typeof(AssemblyCopyrightAttribute));
+            Console.ForegroundColor = ConsoleColor.Green;
+            Version version = assembly.GetName().Version;
+            string line = String.Format("{0} {1}.{2}", getAssemblyTitle(assembly), version.Major, version.Minor);
+            Console.WriteLine(Center(line));
+            Console.WriteLine(Center(copyright.Copyright));
+            Console.WriteLine();
+            Console.ResetColor();
+        }
+
+        ///<summary>
+        /// Retreives all file names from arguments passed to the application. Arguments are files that
+        /// may contain wildcards.
+        ///</summary>
+        private static string[] getAllFiles(string[] args) {
+            string[] paths = new string[args.Length - 1];
+            for (int i = 0; i < args.Length - 1; i++) {
+                paths[i] = args[i + 1];
+            }
+            ArrayList xmlFiles = new ArrayList();
+            string directoryName = null;
+            string directoryPath = null;
+            string wildcardPath = null;
+            bool found;
+            foreach (string path in paths) {
+                found = false;
+                try {
+                    FileInfo fileInfo = new FileInfo(path);
+                    if (fileInfo.Exists) {
+                        found = true;
+                        xmlFiles.Add(fileInfo.FullName);
+                    }
+                }
+                catch (System.ArgumentException) {
+                    // Not very elegant. Found "Illegal characters in path", assuming wildcards.
+                    directoryName = System.IO.Path.GetDirectoryName(path);
+                    if (directoryName == null || directoryName.Length == 0) {
+                        directoryName = System.Environment.CurrentDirectory;
+                    }
+                    directoryPath = System.IO.Path.GetFullPath(directoryName);
+                    wildcardPath = System.IO.Path.GetFileName(path);
+                    string[] wildcardFiles = Directory.GetFiles(directoryPath, wildcardPath);
+                    if (wildcardFiles.Length > 0) {
+                        found = true;
+                        foreach (string fileName in wildcardFiles) {
+                            xmlFiles.Add(fileName);
+                        }
+                    }
+                }
+                if (!found) {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("{0}: path not found", path);
+                    Console.ResetColor();
+                }
+            }
+            return (string[])xmlFiles.ToArray(typeof(String));
+        }
+
+        ///<summary>
+        /// Display the usage when no parameterm is passed to the executable.
+        ///</summary>
+        private static void Usage() {
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.WriteLine("Usage: xvalidatr <schema_file> [ <xml_files> ]");
+            Console.ResetColor();
+            Environment.Exit(1);
+        }
+
+        ///<summary>
+        /// Main method: instantiate the Validator class and calls the validate
+        /// methods.
+        ///</summary>
+        public static int Main(string[] args) {
+            int res = 0;
+            About();
+            if (args.Length < 1) {
+                Usage();
+            }
+            Validator validator = new Validator(args[0]); // args[0] is xsd
+            if (args.Length > 1) {
+                // 2nd argument is XML or directory containing XML files
+                string[] xmlFiles = getAllFiles(args);
+                if (xmlFiles.Length > 0) {
+                    validator.validateXmlFiles(xmlFiles);
+                }
+                else {
+                    validator.printError("No valid path found.");
+                }
+                res = validator.printReport();
+            }
+            return res;
+        }
+    }
+}
