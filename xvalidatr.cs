@@ -260,7 +260,7 @@ namespace xvalidatr {
             copyright = (AssemblyCopyrightAttribute)AssemblyCopyrightAttribute.GetCustomAttribute(assembly,
                                                                                                   typeof(AssemblyCopyrightAttribute));
             Version version = assembly.GetName().Version;
-            string line = String.Format("{0} {1}.{2}.{3}", getAssemblyTitle(assembly), version.Major, version.Minor, version.Revision);
+            string line = String.Format("{0} {1}", getAssemblyTitle(assembly), version);
             ColorConsole.PrintAbout(line);
             ColorConsole.PrintAbout(copyright.Copyright);
         }
@@ -281,15 +281,12 @@ namespace xvalidatr {
             bool found;
             foreach (string path in paths) {
                 found = false;
-                Console.WriteLine(path);
                 if (File.Exists(path)) {
-                    Console.WriteLine("In file");
                     FileInfo fileInfo = new FileInfo(path);
                     found = true;
                     xmlFiles.Add(fileInfo.FullName);
                 }
                 else if (Directory.Exists(path)) {
-                    Console.WriteLine("In dir");
                     string[] files = Directory.GetFiles(path);
                     foreach (string file in files) {
                         FileInfo fileInfo = new FileInfo(file);
