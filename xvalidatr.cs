@@ -30,66 +30,18 @@ namespace xvalidatr {
             validateSchema();
         }
 
-        private void printColor(string text, ConsoleColor color) {
-            Console.ForegroundColor = color;
-            Console.WriteLine(text);
-            Console.ResetColor();
-        }
-
-        private void printColor(string format, Object obj, ConsoleColor color) {
-            Console.ForegroundColor = color;
-            Console.WriteLine(format, obj);
-            Console.ResetColor();
-        }
-
-        private void printError(string text) {
-            printColor(text, ConsoleColor.Red);
-        }
-
-        private void printError(string format, Object obj) {
-            printColor(format, obj, ConsoleColor.Red);
-        }
-
-        private void printWarning(string text) {
-            printColor(text, ConsoleColor.Yellow);
-        }
-
-        private void printSuccess(string text) {
-            printColor(text, ConsoleColor.Green);
-        }
-
-        private void printSuccess(string format, Object obj) {
-            printColor(format, obj, ConsoleColor.Green);
-        }
-
-        private void printBrightTitle(string text) {
-            printColor(text, ConsoleColor.Green);
-        }
-
-        private void printAction(string text) {
-            printColor(text, ConsoleColor.DarkGreen);
-        }
-
-        private void printBright(string text) {
-            printColor(text, ConsoleColor.White);
-        }
-
-        private void printBright(string format, Object obj) {
-            printColor(format, obj, ConsoleColor.White);
-        }
-
         ///<summary>
         /// Validates a schema.
         ///</summary>
         public bool validateSchema() {
             string title = "XML Schema Validation:";
             string schemaFile = _pathSchema;
-            printAction(title);
+            ColorConsole.PrintAction(title);
             try {
                 FileInfo file = new FileInfo(_pathSchema);
                 if (!file.Exists) {
-                    printBright("{0}:", _pathSchema);
-                    printError("not found.");
+                    ColorConsole.PrintBright("{0}:", _pathSchema);
+                    ColorConsole.PrintError("not found.");
                     Environment.Exit(2);
                 }
                 else {
@@ -106,13 +58,13 @@ namespace xvalidatr {
                 string wildcardPath = System.IO.Path.GetFileName(_pathSchema);
                 string[] wildcardFiles = Directory.GetFiles(directoryPath, wildcardPath);
                 if (wildcardFiles.Length == 0) {
-                    printBright("{0}:", _pathSchema);
-                    printError("not found.");
+                    ColorConsole.PrintBright("{0}:", _pathSchema);
+                    ColorConsole.PrintError("not found.");
                     Environment.Exit(2);
                 }
                 else if (wildcardFiles.Length > 1) {
-                    printBright("{0}:", _pathSchema);
-                    printError("includes more than one potential schema files. Restrict the path to only one schema file.");
+                    ColorConsole.PrintBright("{0}:", _pathSchema);
+                    ColorConsole.PrintError("includes more than one potential schema files. Restrict the path to only one schema file.");
                     Environment.Exit(2);
                 }
                 else {
@@ -121,25 +73,25 @@ namespace xvalidatr {
                 }
             }
             try {
-                printBright("{0}:", schemaFile);
+                ColorConsole.WriteBright("{0}: ", schemaFile);
                 XmlSchema.Read(XmlReader.Create(_pathSchema), new ValidationEventHandler(ValidationCallback));
                 if (_error) {
-                    printError("Schema error(s).");
+                    ColorConsole.PrintError("Schema error(s).");
                 }
                 else {
-                    printSuccess("OK.");
+                    ColorConsole.PrintSuccess("OK");
                 }
             }
             catch (XmlSchemaException ex) {
-                printError(ex.Message);
+                ColorConsole.PrintError(ex.Message);
                 Environment.Exit(3);
             }
             catch (XmlException ex) {
-                printError(ex.Message);
+                ColorConsole.PrintError(ex.Message);
                 Environment.Exit(3);
             }
             catch (Exception ex) {
-                printError(ex.Message);
+                ColorConsole.PrintError(ex.Message);
                 Environment.Exit(3);
             }
             return _error;
@@ -154,10 +106,10 @@ namespace xvalidatr {
                 _settings.Schemas.Add(_nameSpace, _pathSchema);
             }
             catch (XmlSchemaException ex) {
-                printError("Schema Error: {0}", ex.Message);
+                ColorConsole.PrintError("Schema Error: {0}", ex.Message);
             }
             catch (XmlException ex) {
-                printError("Schema Error: {0}", ex.Message);
+                ColorConsole.PrintError("Schema Error: {0}", ex.Message);
                 Environment.Exit(3);
             }
         }
@@ -166,15 +118,15 @@ namespace xvalidatr {
         /// Handler used during the validation (XSD and XML).
         ///</summary>
         private void ValidationCallback(object sender, ValidationEventArgs args) {
+            if (!_error) { Console.WriteLine(); }
             _error = true;
             if (args.Severity == XmlSeverityType.Warning) {
-                Console.Write("WARNING: ");
+                ColorConsole.WriteWarning("WARNING: ");
             }
             else if (args.Severity == XmlSeverityType.Error) {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.Write("ERROR: ");
-                Console.ResetColor();
+                ColorConsole.WriteError("ERROR: ");
             }
+            Console.Write("line {0}, pos {1}, ", args.Exception.LineNumber, args.Exception.LinePosition);
             Console.WriteLine(args.Message); // Print the error to the screen.
         }
 
@@ -185,12 +137,12 @@ namespace xvalidatr {
         ///</summary>
         public string getNameSpace() {
             string title = "Extracting Namespace:";
-            printAction(title);
+            ColorConsole.PrintAction(title);
 
             string ns = "";
             FileInfo file = new FileInfo(_pathSchema);
             if (!file.Exists) {
-                printError("{0}: not found.", _pathSchema);
+                ColorConsole.PrintError("{0}: not found.", _pathSchema);
                 Environment.Exit(2);
             }
             try {
@@ -202,15 +154,15 @@ namespace xvalidatr {
                 }
             }
             catch (XmlException ex) {
-                printError("Schema Error: {0}", ex.Message);
+                ColorConsole.PrintError("Schema Error: {0}", ex.Message);
                 Environment.Exit(3);
             }
-            printBright("{0}:", file.FullName);
+            ColorConsole.WriteBright("{0}: ", file.FullName);
             if (ns.Length > 0) {
-                Console.WriteLine("uses namespace '{1}'.", file.FullName, ns);
+                Console.WriteLine("Uses namespace '{1}'", file.FullName, ns);
             }
             else {
-                Console.WriteLine("does not use a particular namespace.", file.FullName);
+                Console.WriteLine("Does not use a particular namespace.", file.FullName);
             }
             return ns;
         }
@@ -224,7 +176,7 @@ namespace xvalidatr {
         ///</param>
         public void validateXmlFiles(string[] xmlFiles) {
             string title = "XML File(s) Validation:";
-            printAction(title);
+            ColorConsole.PrintAction(title);
             createXmlReaderSettings();
             foreach (string xmlFile in xmlFiles) {
                 FileInfo fi = new FileInfo(xmlFile);
@@ -239,22 +191,22 @@ namespace xvalidatr {
         private void validateXmlFile(string xmlFile) {
             _error = false;
             _warning = false;
-            printBright("{0}:", xmlFile);
+            ColorConsole.WriteBright("{0}: ", xmlFile);
             try {
                 XmlDocument doc = new XmlDocument();
                 doc.Load(XmlReader.Create(xmlFile, _settings));
             }
             catch (XmlException ex) {
                 _error = true;
-                printError(ex.Message);
+                ColorConsole.PrintError(ex.Message);
             }
             catch (FileNotFoundException ex) {
                 _error = true;
-                printError(ex.Message);
+                ColorConsole.PrintError(ex.Message);
             }
             catch (Exception ex) {
                 _error = true;
-                printError(ex.Message);
+                ColorConsole.PrintError(ex.Message);
             }
             if (_error) {
                 _nonValidXmlCpt += 1;
@@ -264,7 +216,7 @@ namespace xvalidatr {
             }
             else {
                 _validXmlCpt += 1;
-                printSuccess("OK.");
+                ColorConsole.PrintSuccess("OK");
             }
         }
 
@@ -273,29 +225,21 @@ namespace xvalidatr {
         /// of failure.
         ///</summary>
         public int printReport() {
-            string title = "XML Validation Results:";
-            printAction(title);
+            ColorConsole.PrintAction("XML Validation Summary:");
             int total = _validXmlCpt + _nonValidXmlCpt;
             if (total == 0) {
-                printError("XML file(s) or XML directory not found.");
+                ColorConsole.PrintError("XML file(s) or XML directory not found.");
             }
             else {
-                printBright("{0} XML file(s) processed.", total);
+                ColorConsole.PrintBright("{0} XML file(s) processed.", total);
                 if (_validXmlCpt > 0) {
-                    printSuccess("{0} valid XML file(s).", _validXmlCpt);
+                    ColorConsole.PrintSuccess("{0} valid XML file(s).", _validXmlCpt);
                 }
                 if (_nonValidXmlCpt > 0) {
-                    printError("{0} non valid XML file(s).", _nonValidXmlCpt);
+                    ColorConsole.PrintError("{0} non valid XML file(s).", _nonValidXmlCpt);
                 }
             }
             return _nonValidXmlCpt;
-        }
-
-        ///<summary>
-        /// Helper to center text.
-        ///</summary>
-        private static String Center(string str) {
-            return str.PadLeft((Console.WindowWidth + str.Length) / 2);
         }
 
         private static String getAssemblyTitle(Assembly assembly) {
@@ -315,13 +259,10 @@ namespace xvalidatr {
             AssemblyCopyrightAttribute copyright;
             copyright = (AssemblyCopyrightAttribute)AssemblyCopyrightAttribute.GetCustomAttribute(assembly,
                                                                                                   typeof(AssemblyCopyrightAttribute));
-            Console.ForegroundColor = ConsoleColor.Green;
             Version version = assembly.GetName().Version;
-            string line = String.Format("{0} {1}.{2}", getAssemblyTitle(assembly), version.Major, version.Minor);
-            Console.WriteLine(Center(line));
-            Console.WriteLine(Center(copyright.Copyright));
-            Console.WriteLine();
-            Console.ResetColor();
+            string line = String.Format("{0} {1}.{2}.{3}", getAssemblyTitle(assembly), version.Major, version.Minor, version.Revision);
+            ColorConsole.PrintAbout(line);
+            ColorConsole.PrintAbout(copyright.Copyright);
         }
 
         ///<summary>
@@ -340,15 +281,26 @@ namespace xvalidatr {
             bool found;
             foreach (string path in paths) {
                 found = false;
-                try {
+                Console.WriteLine(path);
+                if (File.Exists(path)) {
+                    Console.WriteLine("In file");
                     FileInfo fileInfo = new FileInfo(path);
-                    if (fileInfo.Exists) {
-                        found = true;
-                        xmlFiles.Add(fileInfo.FullName);
+                    found = true;
+                    xmlFiles.Add(fileInfo.FullName);
+                }
+                else if (Directory.Exists(path)) {
+                    Console.WriteLine("In dir");
+                    string[] files = Directory.GetFiles(path);
+                    foreach (string file in files) {
+                        FileInfo fileInfo = new FileInfo(file);
+                        if (fileInfo.Extension == ".xml") {
+                            found = true;
+                            xmlFiles.Add(fileInfo.FullName);
+                        }
                     }
                 }
-                catch (System.ArgumentException) {
-                    // Not very elegant. Found "Illegal characters in path", assuming wildcards.
+                else {
+                    // Assuming wildcards.
                     directoryName = System.IO.Path.GetDirectoryName(path);
                     if (directoryName == null || directoryName.Length == 0) {
                         directoryName = System.Environment.CurrentDirectory;
@@ -364,9 +316,7 @@ namespace xvalidatr {
                     }
                 }
                 if (!found) {
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine("{0}: path not found", path);
-                    Console.ResetColor();
+                    ColorConsole.PrintError("'{0}': path not found or no XML found in path.", path);
                 }
             }
             return (string[])xmlFiles.ToArray(typeof(String));
@@ -376,9 +326,8 @@ namespace xvalidatr {
         /// Display the usage when no parameterm is passed to the executable.
         ///</summary>
         private static void Usage() {
-            Console.ForegroundColor = ConsoleColor.White;
-            Console.WriteLine("Usage: xvalidatr <schema_file> [ <xml_files> ]");
-            Console.ResetColor();
+            ColorConsole.PrintWarning("Usage:");
+            Console.WriteLine("    xvalidatr <schema_file> [ <xml_files> ]");
             Environment.Exit(1);
         }
 
@@ -400,7 +349,7 @@ namespace xvalidatr {
                     validator.validateXmlFiles(xmlFiles);
                 }
                 else {
-                    validator.printError("No valid path found.");
+                    ColorConsole.PrintError("No XML files found.");
                 }
                 res = validator.printReport();
             }
