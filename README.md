@@ -1,6 +1,6 @@
 # XvalidatR
 
-XML Schema Validator for Windows. `XvalidatR uses external schemas (XSD files).
+XML Schema Validator for Windows. `XvalidatR` uses external schemas (XSD files).
 
 ## Installation
 
