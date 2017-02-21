@@ -260,7 +260,7 @@ namespace xvalidatr {
             copyright = (AssemblyCopyrightAttribute)AssemblyCopyrightAttribute.GetCustomAttribute(assembly,
                                                                                                   typeof(AssemblyCopyrightAttribute));
             Version version = assembly.GetName().Version;
-            string line = String.Format("{0} {1}", getAssemblyTitle(assembly), version);
+            string line = String.Format("{0} {1}.{2}.{3}", getAssemblyTitle(assembly), version.Major, version.Minor, version.Build);
             ColorConsole.PrintAbout(line);
             ColorConsole.PrintAbout(copyright.Copyright);
         }
