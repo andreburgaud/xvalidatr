@@ -41,7 +41,7 @@ To validate several XML files in a directory against XML schema:
 **Notes**:
 * As of version 1.0.0, the latter option is not recursive and processes only files with extension '.xml' in a directory passed as a parameter.
 * You can combine the different options (i.e. directory containing XML files, wild cards, individual files).
-* The examples provided above can all be tested from the directory tests included in the reop.
+* The examples provided above can all be tested from the directory tests included in the repository.
 
 ## Build
 

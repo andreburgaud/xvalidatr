@@ -94,6 +94,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ColorConsole.cs" />
+    <Compile Include="Validator.cs" />
     <Compile Include="xvalidatr.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
