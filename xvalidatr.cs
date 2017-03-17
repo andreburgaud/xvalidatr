@@ -23,16 +23,14 @@ namespace xvalidatr {
         private static void About() {
             Assembly assembly = Assembly.GetExecutingAssembly();
             AssemblyCopyrightAttribute copyright;
-            copyright = (AssemblyCopyrightAttribute)AssemblyCopyrightAttribute.GetCustomAttribute(assembly,
-                                                                                                  typeof(AssemblyCopyrightAttribute));
+            copyright = (AssemblyCopyrightAttribute)Attribute.GetCustomAttribute(assembly, typeof(AssemblyCopyrightAttribute));
             Version version = assembly.GetName().Version;
-            string line = String.Format("{0} {1}.{2}.{3}", getAssemblyTitle(assembly), version.Major, version.Minor, version.Build);
-            ColorConsole.PrintAbout(line);
+            ColorConsole.PrintAbout($"{getAssemblyTitle(assembly)} {version.Major}.{version.Minor}.{version.Build}");
             ColorConsole.PrintAbout(copyright.Copyright);
         }
 
         ///<summary>
-        /// Retreives all file names from arguments passed to the application. Arguments are files that
+        /// Retrieves all file names from arguments passed to the application. Arguments are files that
         /// may contain wildcards.
         ///</summary>
         private static string[] getAllFiles(string[] args) {
@@ -79,7 +77,7 @@ namespace xvalidatr {
                     }
                 }
                 if (!found) {
-                    ColorConsole.PrintError("'{0}': path not found or no XML found in path.", path);
+                    ColorConsole.PrintError($"'{path}': path not found or no XML found in path.");
                 }
             }
             return (string[])xmlFiles.ToArray(typeof(String));

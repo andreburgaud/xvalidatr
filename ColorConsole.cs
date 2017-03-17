@@ -20,30 +20,14 @@ namespace xvalidatr {
             Console.ResetColor();
         }
 
-        private static void printColor(string format, Object obj, ConsoleColor color) {
-            Console.ForegroundColor = color;
-            Console.WriteLine(format, obj);
-            Console.ResetColor();
-        }
-
         private static void writeColor(string text, ConsoleColor color) {
             Console.ForegroundColor = color;
             Console.Write(text);
             Console.ResetColor();
         }
 
-        private static void writeColor(string format, Object obj, ConsoleColor color) {
-            Console.ForegroundColor = color;
-            Console.Write(format, obj);
-            Console.ResetColor();
-        }
-
         public static void PrintError(string text) {
             printColor(text, errorColor);
-        }
-
-        public static void PrintError(string format, Object obj) {
-            printColor(format, obj, errorColor);
         }
 
         public static void WriteError(string text) {
@@ -54,20 +38,12 @@ namespace xvalidatr {
             printColor(text, warningColor);
         }
 
-        public static void PrintWarning(string format, Object obj) {
-            printColor(format, obj, warningColor);
-        }
-
         public static void WriteWarning(string text) {
             writeColor(text, warningColor);
         }
 
         public static void PrintSuccess(string text) {
             printColor(text, successColor);
-        }
-
-        public static void PrintSuccess(string format, Object obj) {
-            printColor(format, obj, successColor);
         }
 
         public static void PrintAbout(string text) {
@@ -83,12 +59,8 @@ namespace xvalidatr {
             printColor(text, ConsoleColor.White);
         }
 
-        public static void PrintBright(string format, Object obj) {
-            printColor(format, obj, bright);
-        }
-
-        public static void WriteBright(string format, Object obj) {
-            writeColor(format, obj, bright);
+        public static void WriteBright(string text) {
+            writeColor(text, bright);
         }
 
     }
