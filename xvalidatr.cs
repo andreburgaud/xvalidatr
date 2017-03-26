@@ -39,9 +39,6 @@ namespace xvalidatr {
                 paths[i] = args[i + 1];
             }
             ArrayList xmlFiles = new ArrayList();
-            string directoryName = null;
-            string directoryPath = null;
-            string wildcardPath = null;
             bool found;
             foreach (string path in paths) {
                 found = false;
@@ -51,30 +48,12 @@ namespace xvalidatr {
                     xmlFiles.Add(fileInfo.FullName);
                 }
                 else if (Directory.Exists(path)) {
-                    string[] files = Directory.GetFiles(path);
-                    foreach (string file in files) {
-                        FileInfo fileInfo = new FileInfo(file);
-                        if (fileInfo.Extension == ".xml") {
-                            found = true;
-                            xmlFiles.Add(fileInfo.FullName);
-                        }
+                    var files = Directory.EnumerateFiles(path, "*.xml", SearchOption.AllDirectories);
+                    foreach (string fileName in files) {
+                        Console.WriteLine(fileName);
+                        xmlFiles.Add(fileName);
                     }
-                }
-                else {
-                    // Assuming wildcards.
-                    directoryName = System.IO.Path.GetDirectoryName(path);
-                    if (directoryName == null || directoryName.Length == 0) {
-                        directoryName = System.Environment.CurrentDirectory;
-                    }
-                    directoryPath = System.IO.Path.GetFullPath(directoryName);
-                    wildcardPath = System.IO.Path.GetFileName(path);
-                    string[] wildcardFiles = Directory.GetFiles(directoryPath, wildcardPath);
-                    if (wildcardFiles.Length > 0) {
-                        found = true;
-                        foreach (string fileName in wildcardFiles) {
-                            xmlFiles.Add(fileName);
-                        }
-                    }
+                    found = files == null ? false : true;
                 }
                 if (!found) {
                     ColorConsole.PrintError($"'{path}': path not found or no XML found in path.");

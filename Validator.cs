@@ -48,12 +48,12 @@ namespace xvalidatr {
             }
             catch (System.ArgumentException) {
                 // Not very elegant. Found "Illegal characters in path", assuming wildcards.
-                string directoryName = System.IO.Path.GetDirectoryName(_pathSchema);
+                string directoryName = Path.GetDirectoryName(_pathSchema);
                 if (directoryName == null || directoryName.Length == 0) {
-                    directoryName = System.Environment.CurrentDirectory;
+                    directoryName = Environment.CurrentDirectory;
                 }
-                string directoryPath = System.IO.Path.GetFullPath(directoryName);
-                string wildcardPath = System.IO.Path.GetFileName(_pathSchema);
+                string directoryPath = Path.GetFullPath(directoryName);
+                string wildcardPath = Path.GetFileName(_pathSchema);
                 string[] wildcardFiles = Directory.GetFiles(directoryPath, wildcardPath);
                 if (wildcardFiles.Length == 0) {
                     ColorConsole.PrintBright($"{_pathSchema}:");

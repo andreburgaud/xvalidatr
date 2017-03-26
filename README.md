@@ -41,9 +41,10 @@ To validate several XML files in a directory against XML schema:
 ```
 
 **Notes**:
-* As of version 1.0.0, the latter option is not recursive and processes only files with extension '.xml' in a directory passed as a parameter.
 * You can combine the different options (i.e. directory containing XML files, wild cards, individual files).
 * The examples provided above can all be tested from the directory tests included in the repository.
+* The search is recursive when passing a valid directory as argument. It searches for all `*.xml` files in the given directory and all subdirectories.
+* To restrict XML file validation to a directory level (not its subdirectories), the argument can be a directory and a wild card for the files. For example, if the directory is named `xml`, the argument can be given as: `xml/*.xml`. This will prevent to search any xml file with extention `.xml` in each subdirectory.
 
 ## Build
 
