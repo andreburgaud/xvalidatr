@@ -13,10 +13,12 @@
 x64/
 x86/
 bld/
+dist
 [Bb]in/
 [Oo]bj/
 [Ll]og/
 [Tt]emp/
+XvalidatR_*.zip
 
 # Visual Studio 2015 cache/options directory
 .vs/

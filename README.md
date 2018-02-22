@@ -1,14 +1,31 @@
 # XvalidatR
 
-XML Schema Validator for Windows. `XvalidatR` uses external schemas (XSD files).
+XML Schema Validator for Windows, Mac OSX and Linux. `XvalidatR` uses external schemas (XSD files).
 
 ![xvalidatr](https://cloud.githubusercontent.com/assets/6396088/23348810/373079e4-fc73-11e6-9e62-732b58025064.png)
 
-## Installation
+## Installation on Windows
 
-1. Download the zip file from the releases tab (https://github.com/andreburgaud/xvalidatr/files/786713/XvalidatR_1.0.0.zip)
-2. Extract `xvalidatr.exe` and `xvalidatr.exe.config` from the zip file
-3. Copy those two files in a directory included in your `PATH`
+1. Download the zip file from the releases tab (https://github.com/andreburgaud/xvalidatr/files/786713/XvalidatR_1.3.0.zip)
+2. Extract `xvalidatr.exe` from the zip file
+3. Copy `xvalidatr.exe` a directory included in your `PATH`
+
+## Installation on Linux and MAc OSX
+
+Prerequisite: Mono needs to be installed on the target system
+
+1. Download the zip file from the releases tab (https://github.com/andreburgaud/xvalidatr/files/786713/XvalidatR_1.3.0.zip)
+2. Extract `xvalidatr.exe` from the zip file
+3. Copy `xvalidatr.exe` a directory included in your `PATH`
+4. In the same directory create file `xvalidatr`:
+
+```
+#!/bin/bash
+path=$(dirname "$0")
+mono "$path/xvalidatr.exe" $*
+```
+
+5. Make `xvalidatr` executable: `$ chmod +x xvalidatr`
 
 ## Usage
 
@@ -48,5 +65,45 @@ To validate several XML files in a directory against XML schema:
 
 ## Build
 
-Build the binary using visual studio or download the zip file from the releases tab.
+### Build on Windows
 
+Use sing Visual Studio
+
+### Build on Mac OSX or Linux
+
+Assuming that you installed `mono`:
+
+```
+$ msbuild
+```
+
+or (deprecated)
+
+```
+$ xbuild
+```
+
+For a Release build:
+
+```
+$ msbuild /p:Configuration=Release
+```
+
+or (deprecated)
+
+```
+$ xbuild /p:Configuration=Release
+```
+
+To clean the project:
+
+
+```
+$ msbuild /t:Clean
+```
+
+or (deprecated)
+
+```
+$ xbuild /t:Clean
+```
