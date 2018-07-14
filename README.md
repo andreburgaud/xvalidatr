@@ -10,14 +10,14 @@ XML Schema Validator for Windows, Mac OSX and Linux. `XvalidatR` uses external s
 2. Extract `xvalidatr.exe` from the zip file
 3. Copy `xvalidatr.exe` a directory included in your `PATH`
 
-## Installation on Linux and MAc OSX
+## Installation on Linux and Mac OSX
 
 Prerequisite: Mono needs to be installed on the target system
 
 1. Download the zip file from the releases tab (https://github.com/andreburgaud/xvalidatr/files/786713/XvalidatR_1.3.0.zip)
 2. Extract `xvalidatr.exe` from the zip file
-3. Copy `xvalidatr.exe` a directory included in your `PATH`
-4. In the same directory create file `xvalidatr`:
+3. Copy `xvalidatr.exe` in a directory included in your `PATH`
+4. In the same directory create a file named `xvalidatr` with the following content:
 
 ```
 #!/bin/bash
@@ -27,11 +27,7 @@ mono "$path/xvalidatr.exe" $*
 
 5. Make `xvalidatr` executable: `$ chmod +x xvalidatr`
 
-## Usage
-
-From the command line, run xvalidatr with at one arguments: one schema (XSD file), and at least one XML file.
-
-### Usage Examples
+## Usage Examples
 
 To only validate the XML schema:
 
@@ -67,7 +63,7 @@ To validate several XML files in a directory against XML schema:
 
 ### Build on Windows
 
-Use sing Visual Studio
+Recommendation: Use Visual Studio.
 
 ### Build on Mac OSX or Linux
 
