@@ -19,6 +19,7 @@ dist
 [Ll]og/
 [Tt]emp/
 XvalidatR_*.zip
+*.zip
 
 # Visual Studio 2015 cache/options directory
 .vs/
