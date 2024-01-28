@@ -4,28 +4,11 @@ XML Schema Validator for Windows, Mac OSX and Linux. `XvalidatR` uses external s
 
 ![xvalidatr](https://cloud.githubusercontent.com/assets/6396088/23348810/373079e4-fc73-11e6-9e62-732b58025064.png)
 
-## Installation on Windows
+## Installation
 
-1. Download the zip file from the releases tab (https://github.com/andreburgaud/xvalidatr/files/786713/XvalidatR_1.3.0.zip)
-2. Extract `xvalidatr.exe` from the zip file
-3. Copy `xvalidatr.exe` a directory included in your `PATH`
-
-## Installation on Linux and Mac OSX
-
-Prerequisite: Mono needs to be installed on the target system
-
-1. Download the zip file from the releases tab (https://github.com/andreburgaud/xvalidatr/files/786713/XvalidatR_1.3.0.zip)
-2. Extract `xvalidatr.exe` from the zip file
-3. Copy `xvalidatr.exe` in a directory included in your `PATH`
-4. In the same directory create a file named `xvalidatr` with the following content:
-
-```
-#!/bin/bash
-path=$(dirname "$0")
-mono "$path/xvalidatr.exe" $*
-```
-
-5. Make `xvalidatr` executable: `$ chmod +x xvalidatr`
+1. Download the zip file for your machine from the GitHub release tab (https://github.com/andreburgaud/xvalidatr/releases).
+1. Extract `xvalidatr` or `xvalidatr.exe` from the zip file
+3. Copy the executable into a directory included in your `PATH`
 
 ## Usage Examples
 
