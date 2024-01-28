@@ -31,3 +31,9 @@ run:
 
 clean:
     dotnet clean
+
+# Push and tag the code to Github
+github-push:
+    @git push
+    @git tag -a {{VERSION}} -m "Version {{VERSION}}"
+    @git push origin --tags
