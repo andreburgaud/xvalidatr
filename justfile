@@ -4,6 +4,8 @@ VERSION := "2.0.0"
 RUNTIME := os() + "-" + arch()
 RUNTIME_ID := if RUNTIME == "linux-x86_64" {
   "linux-x64"
+} else if RUNTIME == "macos-aarch64" {
+  "osx-arm64"
 } else {
   "UNKNOWN"
 }
@@ -29,6 +31,7 @@ publish:
 run:
     dotnet run
 
+# Delete the generated files
 clean:
     dotnet clean
 
