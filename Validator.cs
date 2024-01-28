@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Xml;
 using System.Xml.Schema;
@@ -13,25 +13,27 @@ namespace xvalidatr {
     public class Validator {
         bool _error = false;
         bool _warning = false;
-        string _nameSpace = "";
-        string _pathSchema;
+        string _nameSpace = string.Empty;
+        string _pathSchema = string.Empty;
         int _validXmlCpt = 0;
         int _nonValidXmlCpt = 0;
-        XmlReaderSettings _settings;
+        XmlReaderSettings? _settings;
 
         ///<summary>
         /// Unique constructor. Does not take any parameter. Displays "about" info.
         ///</summary>
-        public Validator(string schema) {
-            _pathSchema = schema;
-            _nameSpace = getNameSpace();
-            validateSchema();
+        public Validator(string? schema) {
+            if (schema is not null) {
+                _pathSchema = schema;
+                _nameSpace = getNameSpace();
+                ValidateSchema();
+            }
         }
 
         ///<summary>
         /// Validates a schema.
         ///</summary>
-        public bool validateSchema() {
+        public bool ValidateSchema() {
             string title = "XML Schema Validation:";
             string schemaFile = _pathSchema;
             ColorConsole.PrintAction(title);
@@ -48,7 +50,7 @@ namespace xvalidatr {
             }
             catch (System.ArgumentException) {
                 // Not very elegant. Found "Illegal characters in path", assuming wildcards.
-                string directoryName = Path.GetDirectoryName(_pathSchema);
+                string? directoryName = Path.GetDirectoryName(_pathSchema);
                 if (directoryName == null || directoryName.Length == 0) {
                     directoryName = Environment.CurrentDirectory;
                 }
@@ -72,7 +74,7 @@ namespace xvalidatr {
             }
             try {
                 ColorConsole.WriteBright($"{schemaFile}: ");
-                XmlSchema.Read(XmlReader.Create(_pathSchema), new ValidationEventHandler(ValidationCallback));
+                _ = XmlSchema.Read(XmlReader.Create(_pathSchema), new ValidationEventHandler(ValidationCallback));
                 if (_error) {
                     ColorConsole.PrintError("Schema error(s).");
                 }
@@ -95,7 +97,7 @@ namespace xvalidatr {
             return _error;
         }
 
-        private void createXmlReaderSettings() {
+        private void CreateXmlReaderSettings() {
             _settings = new XmlReaderSettings();
             try {
                 _settings.ValidationEventHandler += new ValidationEventHandler(ValidationCallback);
@@ -148,7 +150,9 @@ namespace xvalidatr {
                 XPathNavigator nav = doc.CreateNavigator();
                 XPathNodeIterator ni = nav.Select("/*/@targetNamespace");
                 if (ni.MoveNext()) {
-                    ns = ni.Current.Value;
+                    if (ni.Current is not null) {
+                        ns = ni.Current.Value;
+                    }
                 }
             }
             catch (XmlException ex) {
@@ -175,7 +179,7 @@ namespace xvalidatr {
         public void validateXmlFiles(string[] xmlFiles) {
             string title = "XML File(s) Validation:";
             ColorConsole.PrintAction(title);
-            createXmlReaderSettings();
+            CreateXmlReaderSettings();
             foreach (string xmlFile in xmlFiles) {
                 FileInfo fi = new FileInfo(xmlFile);
                 if (fi.Exists) { // The function parameter is a file path

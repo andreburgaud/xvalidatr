@@ -1,28 +1,25 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.24720.0
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.002.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "xvalidatr", "xvalidatr.csproj", "{86BEE8B4-078F-419C-BEAA-E86EFBA75EAE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "xvalidatr", "xvalidatr.csproj", "{65BA82E3-5BAD-48EE-A710-4EA5EDAE036E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
-		Debug|x64 = Debug|x64
-		Debug|x86 = Debug|x86
-		Release|x64 = Release|x64
-		Release|x86 = Release|x86
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{86BEE8B4-078F-419C-BEAA-E86EFBA75EAE}.Debug|x64.ActiveCfg = Debug|x64
-		{86BEE8B4-078F-419C-BEAA-E86EFBA75EAE}.Debug|x64.Build.0 = Debug|x64
-		{86BEE8B4-078F-419C-BEAA-E86EFBA75EAE}.Debug|x86.ActiveCfg = Debug|x86
-		{86BEE8B4-078F-419C-BEAA-E86EFBA75EAE}.Debug|x86.Build.0 = Debug|x86
-		{86BEE8B4-078F-419C-BEAA-E86EFBA75EAE}.Release|x64.ActiveCfg = Release|x64
-		{86BEE8B4-078F-419C-BEAA-E86EFBA75EAE}.Release|x64.Build.0 = Release|x64
-		{86BEE8B4-078F-419C-BEAA-E86EFBA75EAE}.Release|x86.ActiveCfg = Release|x86
-		{86BEE8B4-078F-419C-BEAA-E86EFBA75EAE}.Release|x86.Build.0 = Release|x86
+		{65BA82E3-5BAD-48EE-A710-4EA5EDAE036E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{65BA82E3-5BAD-48EE-A710-4EA5EDAE036E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{65BA82E3-5BAD-48EE-A710-4EA5EDAE036E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{65BA82E3-5BAD-48EE-A710-4EA5EDAE036E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {AF2FE88E-07F0-4F03-9A1C-9474A6EF6658}
 	EndGlobalSection
 EndGlobal

@@ -4,6 +4,7 @@
 *.userosscache
 *.sln.docstates
 *.userprefs
+.vscode/
 
 # Build results
 [Dd]ebug/

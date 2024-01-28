@@ -63,43 +63,37 @@ To validate several XML files in a directory against XML schema:
 
 ### Build on Windows
 
-Recommendation: Use Visual Studio.
+TBD
 
 ### Build on Mac OSX or Linux
 
-Assuming that you installed `mono`:
+Prerequisite: install `dotnet` (https://learn.microsoft.com/en-us/dotnet/core/install/linux-ubuntu).
+
+
+Debug build:
 
 ```
-$ msbuild
+dotnet build
 ```
 
-or (deprecated)
+Release build:
 
 ```
-$ xbuild
+dotnet publish
 ```
 
-For a Release build:
+Standalone executable:
 
 ```
-$ msbuild /p:Configuration=Release
+dotnet publish --configuration Release --self-contained --runtime <runtime_id>
 ```
 
-or (deprecated)
+For example, the `runtime_id` is `linux-x64` on a Linux x86-64 machine. You can find the list of all RIDs at https://learn.microsoft.com/en-us/dotnet/core/rid-catalog.
 
-```
-$ xbuild /p:Configuration=Release
-```
 
-To clean the project:
+Clean the project:
 
 
 ```
-$ msbuild /t:Clean
-```
-
-or (deprecated)
-
-```
-$ xbuild /t:Clean
+dotnet clean
 ```

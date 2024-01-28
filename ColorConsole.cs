@@ -1,20 +1,20 @@
-﻿using System;
+using System;
 
 namespace xvalidatr {
     static class ColorConsole {
 
-        static ConsoleColor errorColor = ConsoleColor.Red;
-        static ConsoleColor warningColor = ConsoleColor.Yellow;
-        static ConsoleColor successColor = ConsoleColor.Green;
-        static ConsoleColor actionColor = ConsoleColor.DarkGreen;
-        static ConsoleColor aboutColor = ConsoleColor.DarkGreen;
-        static ConsoleColor bright = ConsoleColor.White;
+        static readonly ConsoleColor errorColor = ConsoleColor.Red;
+        static readonly ConsoleColor warningColor = ConsoleColor.Yellow;
+        static readonly ConsoleColor successColor = ConsoleColor.Green;
+        static readonly ConsoleColor actionColor = ConsoleColor.DarkGreen;
+        static readonly ConsoleColor aboutColor = ConsoleColor.DarkGreen;
+        static readonly ConsoleColor bright = ConsoleColor.White;
 
         private static String Center(string str) {
             return str.PadLeft((Console.WindowWidth + str.Length) / 2);
         }
 
-        private static void printColor(string text, ConsoleColor color) {
+        private static void PrintColor(string text, ConsoleColor color) {
             Console.ForegroundColor = color;
             Console.WriteLine(text);
             Console.ResetColor();
@@ -27,7 +27,7 @@ namespace xvalidatr {
         }
 
         public static void PrintError(string text) {
-            printColor(text, errorColor);
+            PrintColor(text, errorColor);
         }
 
         public static void WriteError(string text) {
@@ -35,7 +35,7 @@ namespace xvalidatr {
         }
 
         public static void PrintWarning(string text) {
-            printColor(text, warningColor);
+            PrintColor(text, warningColor);
         }
 
         public static void WriteWarning(string text) {
@@ -43,20 +43,20 @@ namespace xvalidatr {
         }
 
         public static void PrintSuccess(string text) {
-            printColor(text, successColor);
+            PrintColor(text, successColor);
         }
 
         public static void PrintAbout(string text) {
-            printColor(Center(text), aboutColor);
+            PrintColor(Center(text), aboutColor);
         }
 
         public static void PrintAction(string text) {
             Console.WriteLine();
-            printColor(text, actionColor);
+            PrintColor(text, actionColor);
         }
 
         public static void PrintBright(string text) {
-            printColor(text, ConsoleColor.White);
+            PrintColor(text, ConsoleColor.White);
         }
 
         public static void WriteBright(string text) {
