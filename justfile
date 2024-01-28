@@ -10,6 +10,7 @@ RUNTIME_ID := if RUNTIME == "linux-x86_64" {
 
 # Default recipe (this list)
 default:
+    @echo "{{APP}} {{VERSION}}"
     @echo "OS: {{os()}}, OS Family: {{os_family()}}, architecture: {{arch()}}"
     @echo "Runtime   : {{RUNTIME}}"
     @echo "Runtime ID: {{RUNTIME_ID}}"
