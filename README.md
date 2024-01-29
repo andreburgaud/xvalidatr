@@ -2,7 +2,7 @@
 
 XML Schema Validator for Windows, Mac OSX and Linux. `XvalidatR` uses external schemas (XSD files).
 
-![xvalidatr](https://cloud.githubusercontent.com/assets/6396088/23348810/373079e4-fc73-11e6-9e62-732b58025064.png)
+![xvaidatr_2 0 0](https://github.com/andreburgaud/xvalidatr/assets/6396088/c885f2cd-20e7-4311-b97c-a4d7d23c9604)
 
 ## Installation
 
@@ -15,25 +15,25 @@ XML Schema Validator for Windows, Mac OSX and Linux. `XvalidatR` uses external s
 To only validate the XML schema:
 
 ```
-> xvalidatr books.xsd
+xvalidatr books.xsd
 ```
 
 To validate an XML file against an XML schema:
 
 ```
-> xvalidatr books.xsd books.xml
+xvalidatr books.xsd books.xml
 ```
 
 To validate several XML files against an XML schema:
 
 ```
-> xvalidatr books.xsd *.xml
+xvalidatr books.xsd *.xml
 ```
 
 To validate several XML files in a directory against XML schema:
 
 ```
-> xvalidatr books.xsd xml
+xvalidatr books.xsd xml
 ```
 
 **Notes**:
@@ -46,7 +46,25 @@ To validate several XML files in a directory against XML schema:
 
 ### Build on Windows
 
-TBD
+**Prerequisite**: Install `dotnet` (see https://dotnet.microsoft.com/en-us/download)
+
+Debug build:
+
+```
+dotnet build
+```
+
+Standalone release executable:
+
+```
+dotnet publish --configuration Release --self-contained --runtime win-x64
+```
+
+To create a zip file with the standalone executable (assuming version 2.0.0):
+
+```
+powershell -Command "Compress-Archive -Path 'bin\Release\net8.0\win-x64\publish\xvalidatr.exe' -DestinationPath 'xvalidatr_win-x64_2.0.0.zip'"
+```
 
 ### Build on Mac OSX or Linux
 
@@ -65,13 +83,13 @@ Release build:
 dotnet publish
 ```
 
-Standalone executable:
+Standalone release executable:
 
 ```
 dotnet publish --configuration Release --self-contained --runtime <runtime_id>
 ```
 
-For example, the `runtime_id` is `linux-x64` on a Linux x86-64 machine. You can find the list of all RIDs at https://learn.microsoft.com/en-us/dotnet/core/rid-catalog.
+For example, the `runtime_id` is `linux-x64` on a Linux x86-64 machine and `osx-arm64` for a Mac M1 or M2. You can find the list of all RIDs at https://learn.microsoft.com/en-us/dotnet/core/rid-catalog.
 
 
 Clean the project:
