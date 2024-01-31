@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
@@ -17,7 +17,7 @@
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
     <FileVersion>2.0.0.0</FileVersion>
     <Description>"XML Schema Validator"</Description>
-    <Copyright>Copyright (c) 2017-2024 - Andre Burgaud"</Copyright>
+    <Copyright>Copyright (c) 2017-2024 - Andre Burgaud</Copyright>
     <PackageLicenseUrl>https://github.com/andreburgaud/xvalidatr/blob/main/LICENSE.md</PackageLicenseUrl>
     <PackageProjectUrl>https://github.com/andreburgaud/xvalidatr</PackageProjectUrl>
     <RepositoryUrl>https://github.com/andreburgaud/xvalidatr</RepositoryUrl>
