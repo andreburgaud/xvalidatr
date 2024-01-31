@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Reflection;
 using System.Collections;
@@ -12,9 +12,7 @@ namespace xvalidatr {
         private static String GetAssemblyTitle(Assembly assembly) {
             foreach (Attribute attr in assembly.GetCustomAttributes(true).Cast<Attribute>()) {
                 if (attr is AssemblyTitleAttribute) {
-                    if (attr is not null) {
-                        return (attr as AssemblyTitleAttribute).Title;
-                    }
+                    return (attr as AssemblyTitleAttribute).Title;
                 }
             }
             return "";
@@ -23,8 +21,7 @@ namespace xvalidatr {
         ///<summary>
         /// Display About text.
         ///</summary>
-        private static void About() {
-            Assembly assembly = Assembly.GetExecutingAssembly();
+        private static void About(Assembly assembly) {
             AssemblyCopyrightAttribute copyright;
             if (assembly is not null) {
                 copyright = (AssemblyCopyrightAttribute)Attribute.GetCustomAttribute(assembly, typeof(AssemblyCopyrightAttribute));
@@ -75,9 +72,22 @@ namespace xvalidatr {
         /// Display the usage when no parameterm is passed to the executable.
         ///</summary>
         private static void Usage() {
+            Assembly assembly = Assembly.GetExecutingAssembly();
+            About(assembly);
+            ColorConsole.PrintWarning("Description:");
+            Console.WriteLine("    Validate one or more XML files against an XML Schema Definition (XSD) file.");
+            Console.WriteLine();
             ColorConsole.PrintWarning("Usage:");
-            Console.WriteLine("    xvalidatr <schema_file> [ <xml_files> ]");
-            Environment.Exit(1);
+            var exe = GetAssemblyTitle(assembly);
+            Console.WriteLine($"    {exe} [OPTIONS]");
+            Console.WriteLine($"    {exe} <schema_file> [ <xml_files> ]");
+            Console.WriteLine();
+            ColorConsole.PrintWarning("Options:");
+            Console.WriteLine("    -h, --help         Print help");
+            Console.WriteLine("    -v, --version      Print version info");
+
+            Console.WriteLine($"    {GetAssemblyTitle(assembly)} <schema_file> [ <xml_files> ]");
+            Console.WriteLine($"    {GetAssemblyTitle(assembly)} <schema_file> [ <xml_files> ]");
         }
 
         ///<summary>
@@ -86,10 +96,26 @@ namespace xvalidatr {
         ///</summary>
         public static int Main(string[] args) {
             int res = 0;
-            About();
             if (args.Length < 1) {
                 Usage();
+                Environment.Exit(1);
             }
+
+            switch (args[0]) {
+                case "-h" or "--help":
+                    Usage();
+                    Environment.Exit(0);
+                    break;
+                case "-v" or "--version":
+                    Assembly assembly = Assembly.GetExecutingAssembly();
+                    Version? version = assembly.GetName().Version;
+                    if (version is not null) {
+                        ColorConsole.PrintSuccess($"{GetAssemblyTitle(assembly)} {version.Major}.{version.Minor}.{version.Build}");
+                    }
+                    Environment.Exit(0);
+                    break;
+            }
+
             Validator validator = new Validator(args[0]); // args[0] is xsd
             if (args.Length > 1) {
                 // 2nd argument is XML or directory containing XML files
