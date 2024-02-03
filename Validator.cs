@@ -102,6 +102,7 @@ namespace xvalidatr {
             try {
                 _settings.ValidationEventHandler += new ValidationEventHandler(ValidationCallback);
                 _settings.ValidationType = ValidationType.Schema;
+                _settings.ValidationFlags|= XmlSchemaValidationFlags.ProcessInlineSchema;
                 _settings.ValidationFlags |= XmlSchemaValidationFlags.ReportValidationWarnings;
                 _settings.Schemas.Add(_nameSpace, _pathSchema);
             }
