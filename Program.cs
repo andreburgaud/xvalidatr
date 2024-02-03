@@ -56,7 +56,6 @@ namespace xvalidatr {
                 else if (Directory.Exists(path)) {
                     var files = Directory.EnumerateFiles(path, "*.xml", SearchOption.AllDirectories);
                     foreach (string fileName in files) {
-                        Console.WriteLine(fileName);
                         xmlFiles.Add(fileName);
                     }
                     found = files == null ? false : true;
@@ -80,14 +79,16 @@ namespace xvalidatr {
             ColorConsole.PrintWarning("Usage:");
             var exe = GetAssemblyTitle(assembly);
             Console.WriteLine($"    {exe} [OPTIONS]");
-            Console.WriteLine($"    {exe} <schema_file> [ <xml_files> ]");
+            Console.WriteLine($"    {exe} <schema_file> [ <xml_files> | <xml_dir> ]");
             Console.WriteLine();
             ColorConsole.PrintWarning("Options:");
             Console.WriteLine("    -h, --help         Print help");
             Console.WriteLine("    -v, --version      Print version info");
-
-            Console.WriteLine($"    {GetAssemblyTitle(assembly)} <schema_file> [ <xml_files> ]");
-            Console.WriteLine($"    {GetAssemblyTitle(assembly)} <schema_file> [ <xml_files> ]");
+            Console.WriteLine();
+            ColorConsole.PrintWarning("Examples:");
+            Console.WriteLine($"    {exe} books.xsd books.xml");
+            Console.WriteLine($"    {exe} books.xsd books1.xml books2.xml");
+            Console.WriteLine($"    {exe} books.xsd xml_dir");
         }
 
         ///<summary>
