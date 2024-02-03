@@ -28,8 +28,8 @@ publish:
     zip -j xvalidatr_{{RUNTIME_ID}}_{{VERSION}}.zip ./bin/Release/net8.0/{{RUNTIME_ID}}/publish/{{APP}}
 
 # Build and run the .NET project output
-run:
-    dotnet run
+run *ARGS:
+    dotnet run {{ARGS}}
 
 # Delete the generated files
 clean:
