@@ -12,7 +12,7 @@ namespace xvalidatr {
         private static String GetAssemblyTitle(Assembly assembly) {
             foreach (Attribute attr in assembly.GetCustomAttributes(true).Cast<Attribute>()) {
                 if (attr is AssemblyTitleAttribute) {
-                    return (attr as AssemblyTitleAttribute).Title;
+                    return (attr as AssemblyTitleAttribute)?.Title ?? "";
                 }
             }
             return "";
@@ -22,15 +22,16 @@ namespace xvalidatr {
         /// Display About text.
         ///</summary>
         private static void About(Assembly assembly) {
-            AssemblyCopyrightAttribute copyright;
+            //AssemblyCopyrightAttribute? copyright;
+            Attribute? copyright;
             if (assembly is not null) {
-                copyright = (AssemblyCopyrightAttribute)Attribute.GetCustomAttribute(assembly, typeof(AssemblyCopyrightAttribute));
+                copyright = Attribute.GetCustomAttribute(assembly, typeof(AssemblyCopyrightAttribute));
                 Version? version = assembly.GetName().Version;
                 if (version is not null) {
                     ColorConsole.PrintAbout($"{GetAssemblyTitle(assembly)} {version.Major}.{version.Minor}.{version.Build}");
                 }
                 if (copyright is not null) {
-                    ColorConsole.PrintAbout(copyright.Copyright);
+                    ColorConsole.PrintAbout(((AssemblyCopyrightAttribute)copyright).Copyright);
                 }
             }
         }

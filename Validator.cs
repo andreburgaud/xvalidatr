@@ -118,7 +118,7 @@ namespace xvalidatr {
         ///<summary>
         /// Handler used during the validation (XSD and XML).
         ///</summary>
-        private void ValidationCallback(object sender, ValidationEventArgs args) {
+        private void ValidationCallback(object? sender, ValidationEventArgs args) {
             if (!_error) { Console.WriteLine(); }
             _error = true;
             if (args.Severity == XmlSeverityType.Warning) {
