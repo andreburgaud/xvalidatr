@@ -40,17 +40,17 @@ namespace xvalidatr {
         /// Retrieves all file names from arguments passed to the application. Arguments are files that
         /// may contain wildcards.
         ///</summary>
-        private static string[] getAllFiles(string[] args) {
+        private static string[] GetAllFiles(string[] args) {
             string[] paths = new string[args.Length - 1];
             for (int i = 0; i < args.Length - 1; i++) {
                 paths[i] = args[i + 1];
             }
-            ArrayList xmlFiles = new ArrayList();
+            ArrayList xmlFiles = [];
             bool found;
             foreach (string path in paths) {
                 found = false;
                 if (File.Exists(path)) {
-                    FileInfo fileInfo = new FileInfo(path);
+                    var fileInfo = new FileInfo(path);
                     found = true;
                     xmlFiles.Add(fileInfo.FullName);
                 }
@@ -59,7 +59,7 @@ namespace xvalidatr {
                     foreach (string fileName in files) {
                         xmlFiles.Add(fileName);
                     }
-                    found = files == null ? false : true;
+                    found = files != null;
                 }
                 if (!found) {
                     ColorConsole.PrintError($"'{path}': path not found or no XML found in path.");
@@ -118,10 +118,10 @@ namespace xvalidatr {
                     break;
             }
 
-            Validator validator = new Validator(args[0]); // args[0] is xsd
+            var validator = new Validator(args[0]); // args[0] is xsd
             if (args.Length > 1) {
                 // 2nd argument is XML or directory containing XML files
-                string[] xmlFiles = getAllFiles(args);
+                string[] xmlFiles = GetAllFiles(args);
                 if (xmlFiles.Length > 0) {
                     validator.validateXmlFiles(xmlFiles);
                 }
