@@ -29,7 +29,7 @@ publish:
 
 # Build and run the .NET project output
 run *ARGS:
-    -dotnet run {{ARGS}}
+    -dotnet run -- {{ARGS}}
 
 # Delete the generated files
 clean:
