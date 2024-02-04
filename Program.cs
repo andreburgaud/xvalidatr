@@ -10,7 +10,7 @@ public static class App {
     private static string GetAssemblyTitle(Assembly assembly) {
         foreach (var attr in assembly.GetCustomAttributes(true).Cast<Attribute>())
             if (attr is AssemblyTitleAttribute attribute)
-                return attribute?.Title ?? "";
+                return attribute.Title;
         return "";
     }
 
@@ -54,7 +54,7 @@ public static class App {
     }
 
     /// <summary>
-    ///     Display the usage when no parameterm is passed to the executable.
+    ///     Display the usage when no parameters str passed to the executable.
     /// </summary>
     private static void Usage(Assembly assembly) {
         ColorConsole.PrintWarning("Description:");
