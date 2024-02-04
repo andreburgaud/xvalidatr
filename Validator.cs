@@ -11,34 +11,36 @@ namespace xvalidatr {
     /// Main Validation class.
     ///</summary>
     public class Validator {
-        bool _error = false;
-        bool _warning = false;
-        string _nameSpace = string.Empty;
-        string _pathSchema = string.Empty;
-        int _validXmlCpt = 0;
-        int _nonValidXmlCpt = 0;
-        XmlReaderSettings? _settings;
+        private bool _error = false;
+        private bool _warning = false;
+        private readonly string _nameSpace = string.Empty;
+        private string _pathSchema = string.Empty;
+        private int _validXmlCpt = 0;
+        private int _nonValidXmlCpt = 0;
+        private XmlReaderSettings? _settings;
 
         ///<summary>
         /// Unique constructor. Does not take any parameter. Displays "about" info.
         ///</summary>
-        public Validator(string? schema) {
-            if (schema is not null) {
-                _pathSchema = schema;
-                _nameSpace = getNameSpace();
-                ValidateSchema();
+        public Validator(string? schema)
+        {
+            if (schema is null) {
+                return;
             }
+            _pathSchema = schema;
+            _nameSpace = GetNameSpace();
+            ValidateSchema();
         }
 
         ///<summary>
         /// Validates a schema.
         ///</summary>
-        public bool ValidateSchema() {
-            string title = "XML Schema Validation:";
-            string schemaFile = _pathSchema;
+        private bool ValidateSchema() {
+            const string title = "XML Schema Validation:";
+            var schemaFile = _pathSchema;
             ColorConsole.PrintAction(title);
             try {
-                FileInfo file = new FileInfo(_pathSchema);
+                var file = new FileInfo(_pathSchema);
                 if (!file.Exists) {
                     ColorConsole.PrintBright($"{_pathSchema}:");
                     ColorConsole.PrintError("not found.");
@@ -50,26 +52,28 @@ namespace xvalidatr {
             }
             catch (System.ArgumentException) {
                 // Not very elegant. Found "Illegal characters in path", assuming wildcards.
-                string? directoryName = Path.GetDirectoryName(_pathSchema);
-                if (directoryName == null || directoryName.Length == 0) {
+                var directoryName = Path.GetDirectoryName(_pathSchema);
+                if (string.IsNullOrEmpty(directoryName)) {
                     directoryName = Environment.CurrentDirectory;
                 }
-                string directoryPath = Path.GetFullPath(directoryName);
-                string wildcardPath = Path.GetFileName(_pathSchema);
-                string[] wildcardFiles = Directory.GetFiles(directoryPath, wildcardPath);
-                if (wildcardFiles.Length == 0) {
-                    ColorConsole.PrintBright($"{_pathSchema}:");
-                    ColorConsole.PrintError("not found.");
-                    Environment.Exit(2);
-                }
-                else if (wildcardFiles.Length > 1) {
-                    ColorConsole.PrintBright($"{_pathSchema}:");
-                    ColorConsole.PrintError("includes more than one potential schema files. Restrict the path to only one schema file.");
-                    Environment.Exit(2);
-                }
-                else {
-                    schemaFile = wildcardFiles[0];
-                    _pathSchema = schemaFile;
+                var directoryPath = Path.GetFullPath(directoryName);
+                var wildcardPath = Path.GetFileName(_pathSchema);
+                var wildcardFiles = Directory.GetFiles(directoryPath, wildcardPath);
+                switch (wildcardFiles.Length) {
+                    case 0:
+                        ColorConsole.PrintBright($"{_pathSchema}:");
+                        ColorConsole.PrintError("not found.");
+                        Environment.Exit(2);
+                        break;
+                    case > 1:
+                        ColorConsole.PrintBright($"{_pathSchema}:");
+                        ColorConsole.PrintError("includes more than one potential schema files. Restrict the path to only one schema file.");
+                        Environment.Exit(2);
+                        break;
+                    default:
+                        schemaFile = wildcardFiles[0];
+                        _pathSchema = schemaFile;
+                        break;
                 }
             }
             try {
@@ -121,11 +125,14 @@ namespace xvalidatr {
         private void ValidationCallback(object? sender, ValidationEventArgs args) {
             if (!_error) { Console.WriteLine(); }
             _error = true;
-            if (args.Severity == XmlSeverityType.Warning) {
-                ColorConsole.WriteWarning("WARNING: ");
-            }
-            else if (args.Severity == XmlSeverityType.Error) {
-                ColorConsole.WriteError("ERROR: ");
+            switch (args.Severity) // There are only two severity types: Warning and Error
+            {
+                case XmlSeverityType.Warning:
+                    ColorConsole.WriteWarning("WARNING: ");
+                    break;
+                case XmlSeverityType.Error:
+                    ColorConsole.WriteError("ERROR: ");
+                    break;
             }
             Console.Write($"line {args.Exception.LineNumber}, pos {args.Exception.LinePosition}, ");
             Console.WriteLine(args.Message); // Print the error to the screen.
@@ -136,20 +143,20 @@ namespace xvalidatr {
         /// namespace will be used during the different validation process (XSD
         /// and XML). XPath is used to extract this information.
         ///</summary>
-        public string getNameSpace() {
-            string title = "Extracting Namespace:";
+        private string GetNameSpace() {
+            const string title = "Extracting Namespace:";
             ColorConsole.PrintAction(title);
 
-            string ns = "";
-            FileInfo file = new FileInfo(_pathSchema);
+            var ns = "";
+            var file = new FileInfo(_pathSchema);
             if (!file.Exists) {
                 ColorConsole.PrintError($"{_pathSchema}: not found.");
                 Environment.Exit(2);
             }
             try {
-                XPathDocument doc = new XPathDocument(file.FullName);
-                XPathNavigator nav = doc.CreateNavigator();
-                XPathNodeIterator ni = nav.Select("/*/@targetNamespace");
+                var doc = new XPathDocument(file.FullName);
+                var nav = doc.CreateNavigator();
+                var ni = nav.Select("/*/@targetNamespace");
                 if (ni.MoveNext()) {
                     if (ni.Current is not null) {
                         ns = ni.Current.Value;
@@ -170,33 +177,32 @@ namespace xvalidatr {
             return ns;
         }
 
-        ///<summary>
-        /// Triggers the XML validation. Determines if the parameter is a file or
-        /// Directory.
-        ///</summary>
-        ///<param name="xml">
-        /// Path to an XML file or a directory containing XML files.
-        ///</param>
-        public void validateXmlFiles(string[] xmlFiles) {
-            string title = "XML File(s) Validation:";
+        /// <summary>
+        ///  Validates the XML files.
+        /// </summary>
+        /// <param name="xmlFiles">
+        ///  XML files.
+        /// </param>
+        public void ValidateXmlFiles(IEnumerable<string> xmlFiles) {
+            const string title = "XML File(s) Validation:";
             ColorConsole.PrintAction(title);
             CreateXmlReaderSettings();
-            foreach (string xmlFile in xmlFiles) {
-                FileInfo fi = new FileInfo(xmlFile);
+            foreach (var xmlFile in xmlFiles) {
+                var fi = new FileInfo(xmlFile);
                 if (fi.Exists) { // The function parameter is a file path
-                    validateXmlFile(xmlFile);
+                    ValidateXmlFile(xmlFile);
                 }
             }
         }
 
         ///<summary>Validates an XML file against a given schema.</summary>
         ///<param name="xmlFile">Path of the XML file to validate.</param>
-        private void validateXmlFile(string xmlFile) {
+        private void ValidateXmlFile(string xmlFile) {
             _error = false;
             _warning = false;
             ColorConsole.WriteBright($"{xmlFile}: ");
             try {
-                XmlDocument doc = new XmlDocument();
+                var doc = new XmlDocument();
                 doc.Load(XmlReader.Create(xmlFile, _settings));
             }
             catch (XmlException ex) {
@@ -227,9 +233,9 @@ namespace xvalidatr {
         /// Prints the number of files processed, the number of success and number
         /// of failure.
         ///</summary>
-        public int printReport() {
+        public int PrintReport() {
             ColorConsole.PrintAction("XML Validation Summary:");
-            int total = _validXmlCpt + _nonValidXmlCpt;
+            var total = _validXmlCpt + _nonValidXmlCpt;
             if (total == 0) {
                 ColorConsole.PrintError("XML file(s) or XML directory not found.");
             }
