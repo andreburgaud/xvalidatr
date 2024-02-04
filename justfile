@@ -20,7 +20,7 @@ default:
 
 # Build the .NET project (debug)
 build:
-    dotnet build
+    dotnet build -WarnAsError
 
 # Publish a .NET project for deployment (release)
 publish:
