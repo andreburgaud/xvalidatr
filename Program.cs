@@ -71,9 +71,7 @@ namespace xvalidatr {
         ///<summary>
         /// Display the usage when no parameterm is passed to the executable.
         ///</summary>
-        private static void Usage() {
-            Assembly assembly = Assembly.GetExecutingAssembly();
-            About(assembly);
+        private static void Usage(Assembly assembly) {
             ColorConsole.PrintWarning("Description:");
             Console.WriteLine("    Validate one or more XML files against an XML Schema Definition (XSD) file.");
             Console.WriteLine();
@@ -98,18 +96,21 @@ namespace xvalidatr {
         ///</summary>
         public static int Main(string[] args) {
             int res = 0;
+            Assembly assembly = Assembly.GetExecutingAssembly();
+
             if (args.Length < 1) {
-                Usage();
+                About(assembly);
+                Usage(assembly);
                 Environment.Exit(1);
             }
 
             switch (args[0]) {
                 case "-h" or "--help":
-                    Usage();
+                    About(assembly);
+                    Usage(assembly);
                     Environment.Exit(0);
                     break;
                 case "-v" or "--version":
-                    Assembly assembly = Assembly.GetExecutingAssembly();
                     Version? version = assembly.GetName().Version;
                     if (version is not null) {
                         ColorConsole.PrintSuccess($"{GetAssemblyTitle(assembly)} {version.Major}.{version.Minor}.{version.Build}");
@@ -118,6 +119,7 @@ namespace xvalidatr {
                     break;
             }
 
+            About(assembly);
             var validator = new Validator(args[0]); // args[0] is xsd
             if (args.Length > 1) {
                 // 2nd argument is XML or directory containing XML files
