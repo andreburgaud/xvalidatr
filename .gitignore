@@ -5,6 +5,7 @@
 *.sln.docstates
 *.userprefs
 .vscode/
+.idea/
 
 # Build results
 [Dd]ebug/
